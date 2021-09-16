@@ -6,10 +6,11 @@
  */
 
 import proxyAddr from 'proxy-addr'
+
 import Env from '@ioc:Adonis/Core/Env'
-import { ServerConfig } from '@ioc:Adonis/Core/Server'
 import { LoggerConfig } from '@ioc:Adonis/Core/Logger'
 import { ProfilerConfig } from '@ioc:Adonis/Core/Profiler'
+import { ServerConfig } from '@ioc:Adonis/Core/Server'
 import { ValidatorConfig } from '@ioc:Adonis/Core/Validator'
 
 /*
