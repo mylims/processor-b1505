@@ -19,6 +19,10 @@ export default Env.rules({
   PORT: Env.schema.number(),
   APP_KEY: Env.schema.string(),
   APP_NAME: Env.schema.string(),
-  DRIVE_DISK: Env.schema.enum(['local'] as const),
   NODE_ENV: Env.schema.enum(['development', 'production', 'testing'] as const),
+  FILE_DOWNLOAD_ENDPOINT: Env.schema.string(),
+  FILE_UPLOAD_ENDPOINT: Env.schema.string(),
+  EVENTS_ENDPOINT: Env.schema.string(),
+  EVENTS_TOPIC: Env.schema.string(),
+  PROCESSOR_ID: Env.schema.string(),
 });

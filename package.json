@@ -27,6 +27,8 @@
   },
   "dependencies": {
     "@adonisjs/core": "^5.3.4",
+    "iv-spectrum": "^0.14.1",
+    "node-fetch": "^3.0.0",
     "proxy-addr": "^2.0.7",
     "reflect-metadata": "^0.1.13",
     "source-map-support": "^0.5.20"

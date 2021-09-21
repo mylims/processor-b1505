@@ -1,5 +1,23 @@
 {
   "commands": {
+    "event:next": {
+      "settings": {
+        "loadApp": true
+      },
+      "commandPath": "./commands/NextEvent",
+      "commandName": "event:next",
+      "description": "Checks for a new available event",
+      "args": [],
+      "aliases": [],
+      "flags": [
+        {
+          "name": "interval",
+          "propertyName": "interval",
+          "type": "number",
+          "description": "Timeout in seconds"
+        }
+      ]
+    },
     "dump:rcfile": {
       "settings": {},
       "commandPath": "@adonisjs/core/build/commands/DumpRc",
