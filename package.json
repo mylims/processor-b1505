@@ -21,16 +21,11 @@
     "eslint-plugin-prettier": "^4.0.0",
     "pino-pretty": "^7.0.0",
     "prettier": "^2.4.1",
-    "typescript": "~4.2",
-    "youch": "^2.2.2",
-    "youch-terminal": "^1.1.1"
+    "typescript": "~4.2"
   },
   "dependencies": {
-    "@adonisjs/core": "^5.3.4",
-    "iv-spectrum": "^0.14.1",
-    "node-fetch": "^3.0.0",
-    "proxy-addr": "^2.0.7",
-    "reflect-metadata": "^0.1.13",
-    "source-map-support": "^0.5.20"
+    "form-data": "^4.0.0",
+    "got": "^11.8.2",
+    "iv-spectrum": "^0.14.1"
   }
 }

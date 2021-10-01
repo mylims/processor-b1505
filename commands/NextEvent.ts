@@ -1,8 +1,9 @@
 import { promisify } from 'util';
 
 import { BaseCommand, flags } from '@adonisjs/core/build/standalone';
-import fetch from 'node-fetch';
 import { fromB1505, toJcamp } from 'iv-spectrum';
+
+import got from 'got';
 
 const asyncTimeout = promisify(setTimeout);
 
@@ -34,7 +35,7 @@ interface EventData {
 }
 
 interface Event {
-  id: string;
+  _id: string;
   topic: string;
   data: EventData;
   createdAt: Date;
@@ -74,6 +75,9 @@ export default class NextEvent extends BaseCommand {
 
   private async executeProcessor() {
     const { default: Env } = await import('@ioc:Adonis/Core/Env');
+    const { default: got } = await import('got');
+
+    // Environment variables
     const eventUrl = Env.get('EVENTS_ENDPOINT');
     const nextEventUrl = `${eventUrl}/next-event`;
     const topic = Env.get('EVENTS_TOPIC');
@@ -85,21 +89,21 @@ export default class NextEvent extends BaseCommand {
     this.logger.info('Checking for new events...');
 
     try {
-      const response = await fetch(nextEventUrl, {
-        method: 'POST',
-        body: JSON.stringify({ topic, processorId }),
-        headers: { 'Content-Type': 'application/json' },
-      });
-      const event = (await response.json()) as Event;
+      const event = await got
+        .post(nextEventUrl, { json: { topic, processorId } })
+        .json<Event>();
       const processId = event.processors.find(
         (processor) => processorId === processor.processorId,
       )?.history[0].processId;
       const fileId = event.data.fileId;
       if (!processId) throw new Error(`Process ${processorId} not found`);
 
-      await this.processEvent(event.id, processId, fileId);
+      this.logger.debug(
+        JSON.stringify({ eventId: event._id, processId, fileId }),
+      );
+      await this.processEvent(event._id, processId, fileId);
     } catch (error) {
-      this.logger.error(error);
+      this.logger.error(error, 'fetching');
     }
   }
 
@@ -109,16 +113,29 @@ export default class NextEvent extends BaseCommand {
     fileId: string,
   ) {
     try {
+      const { default: FormData } = await import('form-data');
+
       const fileUrl = `${this.envs.fileEndpoint}?id=${fileId}`;
-      const content = await (await fetch(fileUrl)).text();
-      const analyses = fromB1505(content);
+      const { headers, body } = await got.get(fileUrl);
+      const filename =
+        headers['content-disposition']
+          ?.split(';')[1]
+          ?.match(/"(?<id>.*?)\.csv"/)?.groups?.id ?? fileId;
+
+      this.logger.info('Processing event ...', eventId);
+      const analyses = fromB1505(body);
       for (const analysis of analyses) {
         const jcamp = toJcamp(analysis);
-        await fetch(this.envs.uploadEndpoint, {
-          method: 'POST',
-          body: jcamp,
-          headers: { 'Content-Type': 'application/octet-stream' },
-        });
+
+        const formData = new FormData();
+        formData.append('file', jcamp, `${filename}.jdx`);
+        formData.append('filename', `${filename}.jdx`);
+        formData.append('eventId', eventId);
+        // TODO: get sampleId from analysis
+        formData.append('sampleId', filename);
+
+        await got.post(this.envs.uploadEndpoint, { body: formData });
+        this.logger.info('File uploaded', eventId, filename);
       }
 
       const payload = {
@@ -127,12 +144,12 @@ export default class NextEvent extends BaseCommand {
         processorId: this.envs.processorId,
         status: EventStatus.SUCCESS,
       };
-      await fetch(`${this.envs.eventUrl}/set-event`, {
-        method: 'POST',
-        body: JSON.stringify(payload),
-        headers: { 'Content-Type': 'application/json' },
-      });
+      await got.put(`${this.envs.eventUrl}/set-event`, { json: payload });
+      this.logger.info('Finished event processing', eventId);
     } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error(error);
+      this.logger.error(error?.message, eventId);
       const payload = {
         eventId,
         processId,
@@ -140,11 +157,7 @@ export default class NextEvent extends BaseCommand {
         status: EventStatus.ERROR,
         message: error.message,
       };
-      await fetch(`${this.envs.eventUrl}/set-event`, {
-        method: 'POST',
-        body: JSON.stringify(payload),
-        headers: { 'Content-Type': 'application/json' },
-      });
+      await got.put(`${this.envs.eventUrl}/set-event`, { json: payload });
     }
   }
 }
