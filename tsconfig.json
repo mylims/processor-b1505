@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "strict": true,
+    "useUnknownInCatchVariables": false,
+    "target": "es2020"
+  },
+  "include": ["./src/**/*"]
+}
