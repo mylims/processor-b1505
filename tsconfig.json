@@ -1,17 +1,11 @@
 {
-  "extends": "./node_modules/adonis-preset-ts/tsconfig",
-  "include": ["**/*"],
-  "exclude": ["node_modules", "build"],
   "compilerOptions": {
-    "outDir": "build",
-    "rootDir": "./",
+    "esModuleInterop": true,
+    "moduleResolution": "node",
     "sourceMap": true,
-    "paths": {
-      "App/*": ["./app/*"],
-      "Config/*": ["./config/*"],
-      "Contracts/*": ["./contracts/*"],
-      "Database/*": ["./database/*"]
-    },
-    "types": ["@adonisjs/core"]
-  }
+    "strict": true,
+    "useUnknownInCatchVariables": false,
+    "target": "es2020"
+  },
+  "include": ["./src/**/*"]
 }
