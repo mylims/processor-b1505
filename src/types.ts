@@ -41,14 +41,13 @@ export interface ProcessorParams {
 }
 
 export type ProcessorType = (
-  /**
-   * Raw file content
-   */
-  content: string,
+  /** Raw file content */
+  content: Buffer,
   filename: string,
 ) => Array<{
   file?: string;
   derived?: Record<string, string>;
+  meta?: Record<string, unknown>;
   sampleId: string;
   filename: string;
 }>;

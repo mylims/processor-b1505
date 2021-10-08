@@ -4,17 +4,13 @@ import dotenv from 'dotenv';
 import FormData from 'form-data';
 import got from 'got';
 import pino from 'pino';
-import PinoPretty from 'pino-pretty';
 
 import { ProcessorParams, EventStatus, Event, ProcessorType } from './types';
 
 const asyncTimeout = promisify(setTimeout);
 
 export default class Processor {
-  private logger = pino({
-    prettyPrint: { colorize: true },
-    prettifier: PinoPretty,
-  });
+  public logger = pino({ prettyPrint: { colorize: true } });
   private envs: {
     topic: string;
     eventUrl: string;
@@ -104,8 +100,11 @@ export default class Processor {
   ): Promise<{ status: EventStatus; message?: string }> {
     try {
       // Fetch the original file
+      this.logger.debug(`Fetching file ${fileId}...`);
       const fileUrl = `${this.envs.fileEndpoint}?id=${fileId}`;
-      const { headers, body } = await got.get(fileUrl);
+      const { headers, body } = await got.get(fileUrl, {
+        responseType: 'buffer',
+      });
 
       // Extract filename from headers
       const filename =
@@ -117,15 +116,18 @@ export default class Processor {
       const results = processor(body, filename);
 
       // Send the results to the server
-      for (const ans of results) {
+      for (const result of results) {
         const formData = new FormData();
-        if (ans.file) formData.append('file', ans.file, ans.filename);
-        if (ans.derived) {
-          formData.append('derived', JSON.stringify(ans.derived));
+        if (result.file) formData.append('file', result.file, result.filename);
+        if (result.derived) {
+          formData.append('derived', JSON.stringify(result.derived));
         }
-        formData.append('filename', ans.filename);
+        if (result.meta) {
+          formData.append('meta', JSON.stringify(result.meta));
+        }
+        formData.append('filename', result.filename);
         formData.append('eventId', eventId);
-        formData.append('sampleId', ans.sampleId);
+        formData.append('sampleId', result.sampleId);
 
         await got.post(this.envs.uploadEndpoint, { body: formData });
         this.logger.info('Result uploaded', eventId, filename);
@@ -134,7 +136,7 @@ export default class Processor {
       this.logger.info('Finished event processing', eventId);
       return { status: EventStatus.SUCCESS };
     } catch (error) {
-      this.logger.error(error?.message, eventId);
+      this.logger.error(error, eventId);
       return { status: EventStatus.ERROR, message: error.message };
     }
   }
