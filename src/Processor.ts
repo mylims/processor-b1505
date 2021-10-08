@@ -84,7 +84,11 @@ export default class Processor {
     try {
       const event = await got
         .post(nextEventUrl, {
-          json: { topic: this.envs.topic, processorId: this.envs.processorId },
+          json: {
+            topic: this.envs.topic,
+            processorId: this.envs.processorId,
+            token: this.envs.token,
+          },
         })
         .json<Event>();
       const processId = event.processors.find(
@@ -107,9 +111,9 @@ export default class Processor {
     try {
       // Fetch the original file
       this.logger.debug(`Fetching file ${fileId}...`);
-      const fileUrl = `${this.envs.fileEndpoint}?id=${fileId}`;
-      const { headers, body } = await got.get(fileUrl, {
+      const { headers, body } = await got.post(this.envs.fileEndpoint, {
         responseType: 'buffer',
+        json: { fileId, token: this.envs.token },
       });
 
       // Extract filename from headers
@@ -164,6 +168,7 @@ export default class Processor {
       processorId: this.envs.processorId,
       status,
       message,
+      token: this.envs.token,
     };
     return got.put(`${this.envs.eventUrl}/set-event`, { json: payload });
   }
