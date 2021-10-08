@@ -38,16 +38,19 @@ export interface Event {
 export interface ProcessorParams {
   interval?: number;
   verbose: boolean;
+  username?: string;
 }
 
 export type ProcessorType = (
   /** Raw file content */
   content: Buffer,
   filename: string,
+  username?: string,
 ) => Array<{
   file?: string;
   derived?: Record<string, string>;
-  meta?: Record<string, unknown>;
-  sampleId: string;
+  description?: string;
+  sampleCode: string[];
   filename: string;
+  username: string;
 }>;

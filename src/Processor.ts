@@ -17,11 +17,14 @@ export default class Processor {
     processorId: string;
     fileEndpoint: string;
     uploadEndpoint: string;
+    collectionName: string;
   };
   private interval?: number;
+  private username?: string;
 
-  public constructor({ interval, verbose }: ProcessorParams) {
+  public constructor({ interval, verbose, username }: ProcessorParams) {
     this.interval = interval;
+    this.username = username;
     this.logger.level = verbose ? 'debug' : 'info';
 
     // Save env variables
@@ -33,6 +36,7 @@ export default class Processor {
         processorId: env.parsed.PROCESSOR_ID,
         fileEndpoint: env.parsed.FILE_DOWNLOAD_ENDPOINT,
         uploadEndpoint: env.parsed.FILE_UPLOAD_ENDPOINT,
+        collectionName: env.parsed.PROCESSOR_COLLECTION,
       };
     } else {
       throw new Error('Missing environment variables');
@@ -89,7 +93,7 @@ export default class Processor {
       }
       return { event, processId };
     } catch (error) {
-      this.logger.error(error);
+      this.logger.error(error, 'Failed new event fetch');
     }
   }
 
@@ -113,7 +117,7 @@ export default class Processor {
           ?.match(/"(?<id>.*?)\.csv"/)?.groups?.id ?? fileId;
 
       this.logger.info('Processing event ...', eventId);
-      const results = processor(body, filename);
+      const results = processor(body, filename, this.username);
 
       // Send the results to the server
       for (const result of results) {
@@ -122,12 +126,14 @@ export default class Processor {
         if (result.derived) {
           formData.append('derived', JSON.stringify(result.derived));
         }
-        if (result.meta) {
-          formData.append('meta', JSON.stringify(result.meta));
+        if (result.description) {
+          formData.append('description', result.description);
         }
+        formData.append('collection', this.envs.collectionName);
         formData.append('filename', result.filename);
         formData.append('eventId', eventId);
-        formData.append('sampleId', result.sampleId);
+        formData.append('sampleCode', result.sampleCode.join(','));
+        formData.append('username', result.username);
 
         await got.post(this.envs.uploadEndpoint, { body: formData });
         this.logger.info('Result uploaded', eventId, filename);

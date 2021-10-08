@@ -10,7 +10,7 @@ export type { ProcessorType };
 export type { ProcessorParams } from './types';
 
 export function processorCli(processorFunc: ProcessorType) {
-  const { verbose, interval } = yargs(hideBin(process.argv))
+  const { verbose, interval, username } = yargs(hideBin(process.argv))
     // Define the command line options
     .options({
       verbose: {
@@ -25,6 +25,12 @@ export function processorCli(processorFunc: ProcessorType) {
         description: 'Interval in seconds',
         demandOption: false,
       },
+      username: {
+        alias: 'u',
+        type: 'string',
+        description: 'Unique identification for user',
+        demandOption: false,
+      },
     })
     .usage('Usage: $0 <command> [options]')
     .command('process', 'start the processor')
@@ -33,7 +39,7 @@ export function processorCli(processorFunc: ProcessorType) {
       'count the lines in the given file',
     ).argv;
 
-  const processor = new Processor({ verbose, interval });
+  const processor = new Processor({ verbose, interval, username });
   processor.run(processorFunc).catch((err) => processor.logger.error(err));
 }
 
