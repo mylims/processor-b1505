@@ -12,6 +12,7 @@ const asyncTimeout = promisify(setTimeout);
 export default class Processor {
   public logger = pino({ prettyPrint: { colorize: true } });
   private envs: {
+    token: string;
     topic: string;
     eventUrl: string;
     processorId: string;
@@ -32,6 +33,7 @@ export default class Processor {
     if (env.parsed) {
       this.envs = {
         topic: env.parsed.EVENTS_TOPIC,
+        token: env.parsed.SERVICE_TOKEN,
         eventUrl: env.parsed.EVENTS_ENDPOINT,
         processorId: env.parsed.PROCESSOR_ID,
         fileEndpoint: env.parsed.FILE_DOWNLOAD_ENDPOINT,
@@ -129,11 +131,14 @@ export default class Processor {
         if (result.description) {
           formData.append('description', result.description);
         }
-        formData.append('collection', this.envs.collectionName);
         formData.append('filename', result.filename);
-        formData.append('eventId', eventId);
         formData.append('sampleCode', result.sampleCode.join(','));
         formData.append('username', result.username);
+
+        formData.append('token', this.envs.token);
+        formData.append('collection', this.envs.collectionName);
+
+        formData.append('eventId', eventId);
 
         await got.post(this.envs.uploadEndpoint, { body: formData });
         this.logger.info('Result uploaded', eventId, filename);
