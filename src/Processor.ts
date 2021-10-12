@@ -84,11 +84,8 @@ export default class Processor {
     try {
       const event = await got
         .post(nextEventUrl, {
-          json: {
-            topic: this.envs.topic,
-            processorId: this.envs.processorId,
-            token: this.envs.token,
-          },
+          json: { topic: this.envs.topic, processorId: this.envs.processorId },
+          headers: { Authorization: this.envs.token },
         })
         .json<Event>();
       const processId = event.processors.find(
@@ -113,7 +110,8 @@ export default class Processor {
       this.logger.debug(`Fetching file ${fileId}...`);
       const { headers, body } = await got.post(this.envs.fileEndpoint, {
         responseType: 'buffer',
-        json: { fileId, token: this.envs.token },
+        json: { fileId },
+        headers: { Authorization: this.envs.token },
       });
 
       // Extract filename from headers
@@ -139,12 +137,14 @@ export default class Processor {
         formData.append('sampleCode', result.sampleCode.join(','));
         formData.append('username', result.username);
 
-        formData.append('token', this.envs.token);
         formData.append('collection', this.envs.collectionName);
 
         formData.append('eventId', eventId);
 
-        await got.post(this.envs.uploadEndpoint, { body: formData });
+        await got.post(this.envs.uploadEndpoint, {
+          body: formData,
+          headers: { Authorization: this.envs.token },
+        });
         this.logger.info('Result uploaded', eventId, filename);
       }
 
@@ -168,8 +168,10 @@ export default class Processor {
       processorId: this.envs.processorId,
       status,
       message,
-      token: this.envs.token,
     };
-    return got.put(`${this.envs.eventUrl}/set-event`, { json: payload });
+    return got.put(`${this.envs.eventUrl}/set-event`, {
+      json: payload,
+      headers: { Authorization: this.envs.token },
+    });
   }
 }
