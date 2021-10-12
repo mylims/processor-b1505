@@ -133,7 +133,6 @@ export default class Processor {
         if (result.description) {
           formData.append('description', result.description);
         }
-        formData.append('filename', result.filename);
         formData.append('sampleCode', result.sampleCode.join(','));
         formData.append('username', result.username);
 
