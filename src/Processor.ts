@@ -108,9 +108,9 @@ export default class Processor {
     try {
       // Fetch the original file
       this.logger.debug(`Fetching file ${fileId}...`);
-      const { headers, body } = await got.post(this.envs.fileEndpoint, {
+      const { headers, body } = await got.get(this.envs.fileEndpoint, {
         responseType: 'buffer',
-        json: { fileId },
+        searchParams: { id: fileId },
         headers: { Authorization: this.envs.token },
       });
 
