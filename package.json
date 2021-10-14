@@ -19,9 +19,7 @@
     "prepack": "npm run tsc",
     "prettier": "prettier --check src",
     "prettier-write": "prettier --write src",
-    "test": "npm run test-coverage && npm run eslint && npm run prettier && npm run check-types",
-    "test-coverage": "npm run test-only -- --coverage",
-    "test-only": "jest",
+    "test": "npm run eslint && npm run prettier && npm run check-types",
     "tsc": "npm run clean && npm run tsc-cjs",
     "tsc-cjs": "tsc --project tsconfig.cjs.json",
     "dev": "npm run tsc && node ./lib/index.js --verbose"
@@ -39,15 +37,12 @@
     "testEnvironment": "node"
   },
   "dependencies": {
-    "@mylims/base-processor": "^0.1.0",
+    "@mylims/base-processor": "^0.1.1",
     "iv-spectrum": "^0.16.0"
   },
   "devDependencies": {
-    "@types/pino": "^6.3.11",
-    "@types/yargs": "^16.0.4",
     "eslint": "^7.32.0",
     "eslint-config-cheminfo-typescript": "^8.0.9",
-    "jest": "^27.2.3",
     "prettier": "^2.4.1",
     "react-plot": "^0.10.2",
     "rimraf": "^3.0.2",
