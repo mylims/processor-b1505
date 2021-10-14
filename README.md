@@ -2,7 +2,7 @@
 
 [![build status][ci-image]][ci-url]
 
-Processor for B1505 instrument.
+Processor for IV spectra
 
 ## Usage
 
@@ -17,7 +17,7 @@ npm run tsc
 After is only needed to optionally specify the verbosity or interval in seconds for running again the processor (if not specified, it will run once):
 
 ```bash
-node ./lib/index.js --verbose --interval 60
+node ./lib/processB1505.js --verbose --interval 60 --username test
 ```
 
 ## License
