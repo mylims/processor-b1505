@@ -1,6 +1,6 @@
+import { processorCli } from '@mylims/base-processor';
+import type { ProcessorType } from '@mylims/base-processor/lib/types';
 import { fromB1505, toJcamp } from 'iv-spectrum';
-
-import type { ProcessorType } from './types';
 
 const processB1505: ProcessorType = (content, filename, username) => {
   const value = content.toString();
@@ -16,4 +16,4 @@ const processB1505: ProcessorType = (content, filename, username) => {
   });
 };
 
-export default processB1505;
+processorCli(processB1505);
