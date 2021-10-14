@@ -1,5 +1,5 @@
 {
-  "name": "processor-b1505",
+  "name": "processor-iv",
   "version": "0.0.0",
   "description": "Processor for B1505 instrument",
   "main": "./lib/index.js",
@@ -28,27 +28,21 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mylims/processor-b1505.git"
+    "url": "git+https://github.com/mylims/processor-iv.git"
   },
   "bugs": {
-    "url": "https://github.com/mylims/processor-b1505/issues"
+    "url": "https://github.com/mylims/processor-iv/issues"
   },
-  "homepage": "https://github.com/mylims/processor-b1505#readme",
+  "homepage": "https://github.com/mylims/processor-iv#readme",
   "jest": {
     "preset": "ts-jest",
     "testEnvironment": "node"
   },
   "dependencies": {
-    "dotenv": "^10.0.0",
-    "form-data": "^4.0.0",
-    "got": "^11.8.2",
-    "iv-spectrum": "^0.16.0",
-    "pino": "^6.13.3",
-    "pino-pretty": "^7.0.1",
-    "yargs": "^16.2.0"
+    "@mylims/base-processor": "^0.1.0",
+    "iv-spectrum": "^0.16.0"
   },
   "devDependencies": {
-    "@types/jest": "^27.0.2",
     "@types/pino": "^6.3.11",
     "@types/yargs": "^16.0.4",
     "eslint": "^7.32.0",
@@ -57,7 +51,6 @@
     "prettier": "^2.4.1",
     "react-plot": "^0.10.2",
     "rimraf": "^3.0.2",
-    "ts-jest": "^27.0.5",
     "typescript": "^4.4.3"
   }
 }
