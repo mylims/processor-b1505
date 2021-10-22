@@ -8,7 +8,9 @@ const processB1505: ProcessorType = (content, filename, username) => {
   const value = content.toString();
   const analyses = fromTransfer(value);
   const fileName = path.basename(filename);
-  const sampleCode = [/_#(?<code>)__/.exec(filename)?.groups?.code ?? fileName];
+  const sampleCode = [
+    /_#(?<code>.+?)__/.exec(filename)?.groups?.code ?? fileName,
+  ];
   return analyses.map((analysis) => {
     const file = toJcamp(analysis);
     const { meta = {} } = analysis.getXYSpectrum() ?? {};
