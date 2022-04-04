@@ -38,7 +38,7 @@
   },
   "dependencies": {
     "@mylims/base-processor": "^0.1.1",
-    "iv-spectrum": "^0.16.0"
+    "iv-spectrum": "^0.16.1"
   },
   "devDependencies": {
     "@types/react": "^17.0.29",
