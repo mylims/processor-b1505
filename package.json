@@ -37,16 +37,16 @@
     "testEnvironment": "node"
   },
   "dependencies": {
-    "@mylims/base-processor": "^0.1.1",
-    "iv-spectrum": "^0.16.0"
+    "@mylims/base-processor": "^0.4.0",
+    "iv-analysis": "^0.3.0"
   },
   "devDependencies": {
-    "@types/react": "^17.0.29",
-    "eslint": "^7.32.0",
-    "eslint-config-cheminfo-typescript": "^8.0.9",
-    "prettier": "^2.4.1",
-    "react-plot": "^0.10.2",
+    "@types/react": "^18.0.17",
+    "eslint": "^8.22.0",
+    "eslint-config-cheminfo-typescript": "^11.0.1",
+    "prettier": "^2.7.1",
+    "react-plot": "^0.20.1",
     "rimraf": "^3.0.2",
-    "typescript": "^4.4.3"
+    "typescript": "^4.7.4"
   }
 }
